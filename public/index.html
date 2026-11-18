@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>OpenShift Full-Stack Demo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
+    input { padding: 8px; width: 70%; }
+    button { padding: 8px 15px; cursor: pointer; }
+    li { padding: 8px 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <h2>Notițe în OpenShift + PostgreSQL</h2>
+  <input type="text" id="inputText" placeholder="Scrie un mesaj...">
+  <button onclick="adauga()">Salvează</button>
+  <ul id="lista"></ul>
+
+  <script>
+    async function incarca() {
+      const res = await fetch('/api/mesaje');
+      const date = await res.json();
+      document.getElementById('lista').innerHTML = date.map(m => `<li>${m.text}</li>`).join('');
+    }
+
+    async function adauga() {
+      const input = document.getElementById('inputText');
+      if (!input.value) return;
+      await fetch('/api/mesaje', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: input.value })
+      });
+      input.value = '';
+      incarca();
+    }
+
+    incarca();
+  </script>
+</body>
+</html>
